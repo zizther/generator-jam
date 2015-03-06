@@ -4,10 +4,10 @@ var modernizrConfig = {
     // @see https://github.com/Modernizr/grunt-modernizr#config-options
     dist: {
         // [REQUIRED] Path to the build you're using for development.
-        "devFile" : '<%= jsSrcDir %>/modernizr.js',
+        "devFile" : '<%= publicPath %>/assets/js/src/modernizr.js',
         
         // Path to save out the built file.
-        "outputFile" : '<%= jsDistDir %>/modernizr.js',
+        "outputFile" : '<%= publicPath %>/assets/js/dist/modernizr.js',
         
         // Based on default settings on http://modernizr.com/download/
         "extra" : {
@@ -43,7 +43,7 @@ var modernizrConfig = {
         // except files that are in node_modules/.
         // You can override this by defining a "files" array below.
         "files" : {
-            "src": ['<%= publicPath %>/assets/css/**', '<%= jsSrcDir %>/**']
+            "src": ['<%= publicPath %>/assets/css/**', '<%= publicPath %>/assets/js/src/**']
         },
         
         // This handler will be passed an array of all the test names passed to the Modernizr API, and will run after the API call has returned

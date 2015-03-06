@@ -1,7 +1,13 @@
 'use strict';
-var yeoman = require('yeoman-generator');
-var chalk = require('chalk');
-var yosay = require('yosay');
+var util = require('util'),
+    _ = require('lodash'),
+    mkdirp = require('mkdirp'),
+    yeoman = require('yeoman-generator'),
+    chalk = require('chalk'),
+    yosay = require('yosay'),
+    
+    IE8 = 'IE 8',
+    IE9 = 'IE 9';
 
 module.exports = yeoman.generators.Base.extend({
     initializing: function () {
@@ -61,7 +67,7 @@ module.exports = yeoman.generators.Base.extend({
         }.bind(this));
     },
 
-    writing: {
+    writing: {       
         app: function () {
             this.fs.copy(
                 this.templatePath('_package.json'),
@@ -77,10 +83,6 @@ module.exports = yeoman.generators.Base.extend({
             this.fs.copy(
                 this.templatePath('editorconfig'),
                 this.destinationPath('.editorconfig')
-            );
-            this.fs.copy(
-                this.templatePath('jshintrc'),
-                this.destinationPath('.jshintrc')
             );
         }
     },
