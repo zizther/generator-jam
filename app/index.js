@@ -5,6 +5,7 @@ var util = require('util'),
     yeoman = require('yeoman-generator'),
     chalk = require('chalk'),
     yosay = require('yosay'),
+    fs = require('fs'),
     
     IE8 = 'IE 8',
     IE9 = 'IE 9';
@@ -21,13 +22,13 @@ module.exports = yeoman.generators.Base.extend({
             
         // Have Yeoman greet the user.
         this.log(yosay(
-            'Welcome to the wonderful' + chalk.red('Jam') + ' generator!'
+            'Welcome to the wonderful ' + chalk.red('Jam') + ' generator!'
         ));
 
         var prompts = [
             {
                 type: 'input',
-                name: 'appName',
+                name: 'appname',
                 message: 'Project name',
                 validate: function (val) {
                     return val !== '';
@@ -86,6 +87,70 @@ module.exports = yeoman.generators.Base.extend({
             );
         }
     },
+    
+    /*
+    writing: {
+        git: function () {
+            this.copy('gitignore', '.gitignore');
+        },
+
+        bower: function () {
+            this.template('_bower.json', 'bower.json', this.userOptions);
+            this.template('_bowerrc', '.bowerrc', this.userOptions);
+        },
+
+        editorconfig: function () {
+            this.copy('editorconfig', '.editorconfig');
+        },
+
+        gruntfile: function () {
+            this.template('_Gruntfile.js', 'Gruntfile.js', this.userOptions);
+        },
+
+        readme: function () {
+            this.template('readme.md', 'readme.md', this.userOptions);
+        },
+
+        packageJSON: function () {
+            this.template('_package.json', 'package.json', this.userOptions);
+        }
+    },
+    */
+
+    /*
+    end: function () {
+        this.installDependencies({
+            callback: function () {
+                var opts = this.userOptions,
+                    base = this.dest._base();
+
+                // Fetch and copy Maido Js to lib folder
+                if (opts.useMaidoJs)
+                    copyBowerFiles.call(this, 'maidojs/src', jsLibDir);
+
+                // Fetch and copy Jam to public
+                if (opts.useJam)
+                    copyBowerFiles.call(this, 'jam', publicDir, excludeJamFiles);
+
+                if (opts.useRequireJs){
+                    fs.unlinkSync(base + '/' + jsSrcDir + '/app/view/page/_view.js');
+
+                    // Update bower component paths in main.js config
+                    this.spawnCommand('grunt', ['bower-requirejs']);
+                }
+
+                copyModernizrToSrc.call(this);
+
+                // Get php framework
+                fetchPhpFramework.call(this, opts.phpFramework, opts.phpFrameworkVersion, function () {
+                    // Overwrite .gitignore with our version
+                    fs.rename(base + '/gitignore', base + '/.gitignore');
+                });
+
+            }.bind(this)
+        });
+    }
+    */
 
     install: function () {
         this.installDependencies({
