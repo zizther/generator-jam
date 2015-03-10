@@ -1,31 +1,23 @@
 'use strict';
-var util = require('util');
-var _ = require('lodash');
-var _s = require('underscore.string');
-var mkdirp = require('mkdirp');
-var yeoman = require('yeoman-generator');
-var chalk = require('chalk');
-var yosay = require('yosay');
+var util = require('util'),
+    _ = require('lodash'),
+    mkdirp = require('mkdirp'),
+    generators = require('yeoman-generator'),
+    chalk = require('chalk'),
+    yosay = require('yosay'),
+    fs = require('fs'),
     
-var IE8 = 'IE 8',
+    IE8 = 'IE 8',
     IE9 = 'IE 9';
 
-// Grab a possible name for the jam module.
-var extractModuleName = function (appname) {
-    var slugged = _s.slugify(appname);
-    
-    return slugged.toLowerCase();
-};
-
-module.exports = yeoman.generators.Base.extend({
+module.exports = generators.Base.extend({
     initializing: function () {
         this.pkg = require('../package.json');
     },
 
     prompting: function () {
         var done = this.async(),
-            self = this,
-            moduleName = extractModuleName(this.appname);
+            self = this;
             
         // Have Yeoman greet the user.
         this.log(yosay(
@@ -35,27 +27,29 @@ module.exports = yeoman.generators.Base.extend({
         var prompts = [
             {
                 type: 'input',
-                name: 'appname',
+                name: 'name',
                 message: 'Project name',
                 validate: function (val) {
                     return val !== '';
                 },
-                default: moduleName
+                default : this.appname // Default to current folder name
             },
             {
                 type: 'input',
                 name: 'publicPath',
-                message: 'Public directory path (".", "public", "public_html", etc)',
+                message: 'Public directory path (e.g.: . | public | public_html) - Don\'t include any slashes',
                 validate: function (val) {
                     return val !== '';
                 },
-                default: 'public_html'
+                default: 'public_html',
+                store: true
             },
             {
                 type: 'input',
                 name: 'tinyPngAPIKey',
                 message: 'Tiny PNG API Key',
-                default: false
+                default: false,
+                store: true
             },
             {
                 type: 'list',
@@ -66,61 +60,45 @@ module.exports = yeoman.generators.Base.extend({
         ];
 
 
-        this.prompt(prompts, function (props) {
-            this.someOption = props.someOption;
-
+        this.prompt(prompts, function (answers) {
+            var features = answers.features;
+    
+            function hasFeature(feat) {
+                return features && features.indexOf(feat) !== -1;
+            }
+    
+            //this.name = hasFeature('name'); // boolean
+    
+            this.name = answers.name;
+            this.publicPath = answers.publicPath;
+            this.tinyPngAPIKey = answers.tinyPngAPIKey;
+            this.minIeVersionSupport = answers.minIeVersionSupport;
+    
             done();
         }.bind(this));
     },
 
-    writing: {       
-        app: function () {
-            this.fs.copy(
-                this.templatePath('_package.json'),
-                this.destinationPath('package.json')
-            );
-            this.fs.copy(
-                this.templatePath('_bower.json'),
-                this.destinationPath('bower.json')
-            );
-        },
-    
-        projectfiles: function () {
-            this.fs.copy(
-                this.templatePath('editorconfig'),
-                this.destinationPath('.editorconfig')
-            );
-        }
+    packageJSON: function () {
+        this.template('_package.json', 'package.json');
     },
-    
-    /*
-    writing: {
-        git: function () {
-            this.copy('gitignore', '.gitignore');
-        },
-
-        bower: function () {
-            this.template('_bower.json', 'bower.json', this.userOptions);
-            this.template('_bowerrc', '.bowerrc', this.userOptions);
-        },
-
-        editorconfig: function () {
-            this.copy('editorconfig', '.editorconfig');
-        },
-
-        gruntfile: function () {
-            this.template('_Gruntfile.js', 'Gruntfile.js', this.userOptions);
-        },
-
-        readme: function () {
-            this.template('readme.md', 'readme.md', this.userOptions);
-        },
-
-        packageJSON: function () {
-            this.template('_package.json', 'package.json', this.userOptions);
-        }
+    bower: function () {
+        this.template('_bower.json', 'bower.json');
     },
-    */
+    bowerRc: function () {
+        this.template('_bowerrc', '.bowerrc');
+    },
+    git: function () {
+        this.copy('gitignore', '.gitignore');
+    },
+    readMe: function () {
+        this.copy('gitignore', '.gitignore');
+    },
+    editorConfig: function () {
+        this.copy('editorconfig', '.editorconfig');
+    },
+    gruntfile: function () {
+        this.template('Gruntfile.js');
+    },
 
     /*
     end: function () {

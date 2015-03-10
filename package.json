@@ -31,10 +31,11 @@
         "grunt"
     ],
     "dependencies": {
-        "yeoman-generator": "^0.18.0",
-        "chalk": "^1.0.0",
-        "yosay": "^1.0.0",
-        "lodash": "*",
+        "yeoman-generator": "~0.18.10",
+        "chalk": "^0.5.1",
+        "yosay": "~1.0.3",
+        "lodash": "^2.4.1",
+        "underscore.string": "^2.4.0",
         "mkdirp": "latest"
     },
     "devDependencies": {
@@ -42,9 +43,5 @@
     },
     "peerDependencies": {
         "yo": ">=1.0.0"
-    },
-    "_npmUser": {
-        "name": "Nathan Reed",
-        "email": "info@vimia.co.uk"
     }
 }
