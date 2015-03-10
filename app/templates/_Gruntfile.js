@@ -4,10 +4,10 @@ var modernizrConfig = {
     // @see https://github.com/Modernizr/grunt-modernizr#config-options
     dist: {
         // [REQUIRED] Path to the build you're using for development.
-        "devFile" : '<%= publicPath %>/assets/js/src/modernizr.js',
+        "devFile" : '<%= publicDir %>/assets/js/src/modernizr.js',
         
         // Path to save out the built file.
-        "outputFile" : '<%= publicPath %>/assets/js/dist/modernizr.js',
+        "outputFile" : '<%= publicDir %>/assets/js/dist/modernizr.js',
         
         // Based on default settings on http://modernizr.com/download/
         "extra" : {
@@ -43,7 +43,7 @@ var modernizrConfig = {
         // except files that are in node_modules/.
         // You can override this by defining a "files" array below.
         "files" : {
-            "src": ['<%= publicPath %>/assets/css/**', '<%= publicPath %>/assets/js/src/**']
+            "src": ['<%= publicDir %>/assets/css/**', '<%= publicDir %>/assets/js/src/**']
         },
         
         // This handler will be passed an array of all the test names passed to the Modernizr API, and will run after the API call has returned
@@ -104,8 +104,8 @@ var notificationConfig = {
         }
     }
 };
-
-var jamConfig = {<% if (useJam) { %>
+    
+var jamConfig = {
     // Add vendor prefixed styles
     autoprefixer: {
         options: {
@@ -114,11 +114,11 @@ var jamConfig = {<% if (useJam) { %>
         multiple_files: {
             expand: true,
             flatten: true,
-            src: '<%= publicPath %>/assets/css/*.css',
-            dest: '<%= publicPath %>/assets/css/'
+            src: '<%= publicDir %>/assets/css/*.css',
+            dest: '<%= publicDir %>/assets/css/'
         }
     },
- 
+    
     // Compass - required for autoprefixer
     compass: {
         options: {
@@ -127,7 +127,7 @@ var jamConfig = {<% if (useJam) { %>
         },
         dist: {
             options: {
-                basePath: '<%= publicPath %>/assets/',
+                basePath: '<%= publicDir %>/assets/',
                 httpPath: '../',
                 environment: 'production',
                 sassDir: 'css/sass',
@@ -140,7 +140,7 @@ var jamConfig = {<% if (useJam) { %>
         },
         dev: {
             options: {
-                basePath: '<%= publicPath %>/assets/',
+                basePath: '<%= publicDir %>/assets/',
                 httpPath: '../',
                 sassDir: 'css/sass',
                 imagesDir: 'graphics',
@@ -150,20 +150,20 @@ var jamConfig = {<% if (useJam) { %>
             }
         },
     },
-
+    
     // Watches files and folders for us
     watch: {
         // Watch to see if we change this gruntfile
         gruntfile: {
             files: ['Gruntfile.js']
         },
- 
+    
         // Compass
         compass: {
-            files: ['<%= publicPath %>/assets/css/sass/**/*.scss'],
+            files: ['<%= publicDir %>/assets/css/sass/**/*.scss'],
             tasks: ['compass:dev', 'autoprefixer']
         },
- 
+    
         // Livereload
         livereload: {
             options: {
@@ -172,10 +172,10 @@ var jamConfig = {<% if (useJam) { %>
             files: [
                 '{,*/}*.html',
                 '{,*/}*.php',
-                '<%= publicPath %>/assets/js/{,*/}*.js',
-                '<%= publicPath %>/assets/css/{,*/}*.css',
-                '<%= publicPath %>/assets/css/{,*/}*.scss',
-                '<%= publicPath %>/assets/graphics/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                '<%= publicDir %>/assets/js/{,*/}*.js',
+                '<%= publicDir %>/assets/css/{,*/}*.css',
+                '<%= publicDir %>/assets/css/{,*/}*.scss',
+                '<%= publicDir %>/assets/graphics/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
             ]
         },
     },
@@ -185,16 +185,17 @@ var jamConfig = {<% if (useJam) { %>
         dynamic: {
             files: [{
                 expand: true,
-                cwd: '<%= publicPath %>/assets/graphics/',
+                cwd: '<%= publicDir %>/assets/graphics/',
                 src: ['**/*.{png,jpg,jpeg,svg}'],
-                dest: '<%= publicPath %>/assets/graphics/'
+                dest: '<%= publicDir %>/assets/graphics/'
             }]
         }
     },
-    <%= if(tinyPngAPIKey) %>
+    
+    <% if(tingPngApiKey) { %>
     tinypng: {
         options: {
-            apiKey: "<%= tinyPngAPIKey %>",
+            apiKey: "<%= tingPngApiKey %>",
             checkSigs: true,
             sigFile: 'file_sigs.json',
             summarize: true,
@@ -203,12 +204,13 @@ var jamConfig = {<% if (useJam) { %>
         },
         compress: {
             expand: true,
-            cwd: '<%= publicPath %>/assets/graphics/',
+            cwd: '<%= publicDir %>/assets/graphics/',
             src: ['**/*.{png,jpg,jpeg}'],
-            dest: '<%= publicPath %>/assets/graphics/'
+            dest: '<%= publicDir %>/assets/graphics/'
         }
     },
-    <%= } %>
+    <% } %>
+    
     parker: {
         options: {
             metrics: [
@@ -224,9 +226,9 @@ var jamConfig = {<% if (useJam) { %>
             usePackage: true
         },
         src: [
-          '<%= publicPath %>/assets/css/*.css'
+          '<%= publicDir %>/assets/css/*.css'
         ]
-    }<% } %>
+    }
 };
 
 var ProjectTasks = function (grunt) {
@@ -237,7 +239,7 @@ var ProjectTasks = function (grunt) {
         config = {
             pkg: grunt.file.readJSON('package.json'),
             globalConfig: {
-                public_folder: '<%= publicPath %>',
+                public_folder: '<%= publicDir %>',
             },
             modernizr: modernizrConfig,
             notify_hooks: {
@@ -249,7 +251,7 @@ var ProjectTasks = function (grunt) {
         };
     
     // Project configuration
-    grunt.initConfig(_.extend(config, shellConfig, jamConfig, requireJsConfig));
+    grunt.initConfig(_.extend(config, shellConfig, jamConfig));
     
     
     /*** Shell Task ***/
@@ -261,8 +263,8 @@ var ProjectTasks = function (grunt) {
         'grunt-contrib-watch',
         'grunt-autoprefixer',
         'grunt-contrib-compass',
-        'grunt-contrib-imagemin',
-        'grunt-tinypng',
+        'grunt-contrib-imagemin',<% if(tingPngApiKey) { %>
+        'grunt-tinypng',<% } %>
         'grunt-parker',
         'grunt-newer'
     ];
@@ -278,8 +280,8 @@ var ProjectTasks = function (grunt) {
     buildTasks.push(
         'compass:dist',
         'autoprefixer',
-        'newer:imagemin',
-        'tinypng',
+        'newer:imagemin',<% if(tingPngApiKey) { %>
+        'tinypng',<% } %>
         'notify:jamBuild'
     );
     
