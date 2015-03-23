@@ -93,11 +93,6 @@ var notificationConfig = {
             message: 'Front-end build process complete'
         }
     },
-    requireJsBuild: {
-        options: {
-            message: 'Require JS build process complete'
-        }
-    },
     modernizr: {
         options: {
             message: 'Modernizr compliled and process complete'
