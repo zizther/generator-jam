@@ -102,9 +102,13 @@ var notificationConfig = {
     
 var jamConfig = {
     // Add vendor prefixed styles
-    autoprefixer: {
+    postcss: {
         options: {
-            browsers: ['> 1%', 'last 2 versions', 'Firefox ESR', 'Opera 12.1', <%= minIeVersionSupport === 'IE 8' ? "'ie 8', 'ie 9'" : "'ie 9'" %>]
+            map: false, // inline sourcemaps
+            processors: [
+		        require('autoprefixer-core')({browsers: 'last 2 versions'}), // add vendor prefixes
+				//require('cssnano')() // minify the result
+		    ]
         },
         multiple_files: {
             expand: true,
@@ -256,7 +260,7 @@ var ProjectTasks = function (grunt) {
     /*** Jam Packages and Tasks ***/
     var jamPkgs = [
         'grunt-contrib-watch',
-        'grunt-autoprefixer',
+        'grunt-postcss',
         'grunt-contrib-compass',
         'grunt-contrib-imagemin',<% if(tingPngApiKey) { %>
         'grunt-tinypng',<% } %>
@@ -274,7 +278,7 @@ var ProjectTasks = function (grunt) {
     
     buildTasks.push(
         'compass:dist',
-        'autoprefixer',
+        'postcss',
         'newer:imagemin',<% if(tingPngApiKey) { %>
         'tinypng',<% } %>
         'notify:jamBuild'
