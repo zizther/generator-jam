@@ -1,17 +1,14 @@
 'use strict';
 var path = require('path');
 var yeoman = require('yeoman-generator');
-var url = require('url');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var _ = require('lodash');
 var _s = require('underscore.string');
 var fs = require('fs');
 
-var IE8 = 'IE 8',
-    IE9 = 'IE 9';
 
-var excludeJamFiles = ['.editorconfig', '.gitignore', 'LICENSE.md', 'bower.json', '.bowerrc', 'readme.md', '_.htaccess', 'Gruntfile.js', 'package.json'];
+var excludeJamFiles = ['.editorconfig', '.gitignore', 'LICENSE.md', 'bower.json', '.bowerrc', 'readme.md', '_.htaccess', 'gulpfile.js', 'package.json'];
 
 // Grab a possible name for the project.
 var extractModuleName = function (appname) {
@@ -107,7 +104,7 @@ module.exports = yeoman.generators.Base.extend({
         validate: function (val) {
             return val !== '';
         },
-        default: 'public_html',
+        default: 'public',
         store: true
       }];
 
@@ -149,7 +146,7 @@ module.exports = yeoman.generators.Base.extend({
         type: 'list',
         name: 'minIeVersionSupport',
         message: 'Minimum IE version support?',
-        choices: [IE8, IE9]
+        choices: ['8', '9', '10', '11']
       }];
 
       this.prompt(prompts, function (props) {
@@ -190,8 +187,8 @@ module.exports = yeoman.generators.Base.extend({
       );
       
       this.fs.copyTpl(
-        this.templatePath('_Gruntfile.js'),
-        this.destinationPath('Gruntfile.js'),
+        this.templatePath('_gulpfile.js'),
+        this.destinationPath('gulpfile.js'),
           {
             publicDir: this.publicDir,
             tingPngApiKey: this.tinyPngAPIKey,
