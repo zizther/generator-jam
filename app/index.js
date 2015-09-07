@@ -19,7 +19,7 @@ var extractModuleName = function (appname) {
 
 // Copy Bower files to another directory
 var copyBowerFiles = function (component, to, exclude) {
-  var base = this.dest._base(),
+  var base = this.destinationPath._base(),
       publicDir = base + '/' + this.publicDir,
       publicAssetsDir = publicDir + '/assets',
       bowerComponentsDir = publicAssetsDir + '/bower_components',
@@ -35,7 +35,7 @@ var copyBowerFiles = function (component, to, exclude) {
 
 // Copy modernizr file to JS directory
 var copyModernizrToSrc = function () {
-  var base = this.dest._base(),
+  var base = this.destinationPath._base(),
       publicDir = base + '/' + this.publicDir,
       publicAssetsDir = publicDir + '/assets',
       bowerComponentsDir = publicAssetsDir + '/bower_components',
@@ -216,7 +216,7 @@ module.exports = yeoman.generators.Base.extend({
   end: function () {
     this.installDependencies({
       callback: function () {
-        //var base = this.dest._base();
+        var base = this.destinationPath._base();
 
         // Fetch and copy Jam to public directory
         copyBowerFiles.call(this, 'jam', this.publicDir, excludeJamFiles);
