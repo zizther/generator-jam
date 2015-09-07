@@ -216,7 +216,7 @@ module.exports = yeoman.generators.Base.extend({
   end: function () {
     this.installDependencies({
       callback: function () {
-        var base = this.dest._base();
+        //var base = this.dest._base();
 
         // Fetch and copy Jam to public directory
         copyBowerFiles.call(this, 'jam', this.publicDir, excludeJamFiles);
