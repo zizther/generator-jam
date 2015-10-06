@@ -1,4 +1,4 @@
-# generator-jam [![Build Status](https://secure.travis-ci.org/zizther/generator-jam.png?branch=master)](https://travis-ci.org/zizther/generator-jam)
+# generator-jam [![Build Status](https://secure.travis-ci.org/zizther/generator-jam.png?branch=master)](https://travis-ci.org/zizther/generator-jam) [![Dependencies](https://david-dm.org/zizther/generator-jam.svg)](https://david-dm.org/zizther/generator-jam)
 
 > [Yeoman](http://yeoman.io) generator
 
