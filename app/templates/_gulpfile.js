@@ -73,7 +73,7 @@ gulp.task('sass-dev', function(){
 	var processors = [
         autoprefixer({browsers: autoprefixerBrowsers})
     ];
-	
+
 	gulp.src(paths.styles.sass + '**/*.scss')
     	.pipe(sass({
 	    	precision: sassPrecision,
@@ -89,7 +89,7 @@ gulp.task('sass-production', function(){
 	var processors = [
         autoprefixer({browsers: autoprefixerBrowsers})
     ];
-	
+
 	gulp.src(paths.styles.sass + '**/*.scss')
     	.pipe(sass({
 	    	precision: sassPrecision,
@@ -138,7 +138,7 @@ gulp.task('watch', function() {
 		  	baseDir: basePaths.root
 	  	}
   	});
-  	
+
   	gulp.watch(paths.styles.sass + '**/*.scss', ['sass-watch']);
 });
 
@@ -146,4 +146,6 @@ gulp.task('watch', function() {
 gulp.task('default', ['watch']);
 
 // Build task
-gulp.task('build', ['modernizr', 'sass-production', 'concat', 'tinypng'], function() {});
+var buildTasks = ['modernizr', 'sass-production', 'concat'<% if(tingPngApiKey) { %>, 'tinypng'<% } else { %>, 'images'<% } %>];
+
+gulp.task('build', buildTasks, function() {});

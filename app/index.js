@@ -6,6 +6,8 @@ var yosay = require('yosay');
 var _ = require('lodash');
 var _s = require('underscore.string');
 var fs = require('fs');
+var copy = require('recursive-copy');
+var mkdirp = require('mkdirp');
 
 
 var excludeJamFiles = ['.editorconfig', '.gitignore', 'LICENSE.md', 'bower.json', '.bowerrc', 'readme.md', '_.htaccess', 'gulpfile.js', 'package.json'];
@@ -19,49 +21,64 @@ var extractModuleName = function (appname) {
 
 // Copy Bower files to another directory
 var copyBowerFiles = function (component, to, exclude) {
-  var base = this.destinationPath._base(),
-      publicDir = base + '/' + this.publicDir,
-      publicAssetsDir = publicDir + '/assets',
-      bowerComponentsDir = publicAssetsDir + '/bower_components',
-      bower,
-      from;
-    
-  to = (base + '/' + to || publicAssetsDir);
-  from = bowerComponentsDir + '/' + component;
+    var base = this.destinationRoot(),
+        publicDir = base + '/' + this.publicDir,
+        publicAssetsDir = publicDir + '/assets',
+        bowerComponentsDir = publicAssetsDir + '/bower_components',
+        bower,
+        from;
 
-  //this.dest.copy(from, to);
-  this.dest.recurse(from, copyDestPathPartial.call(this, to, exclude));
+    to = (base + '/' + to || publicAssetsDir);
+    from = bowerComponentsDir + '/' + component;
+
+    var options = {
+        overwrite: true,
+        dot: true,
+        junk: false,
+        filter: function(filePath) {
+            return exclude.indexOf(filePath) === -1;
+        }
+    };
+
+    copy(from, to, options, function(error, results) {
+        if (error) {
+            console.error(component + ' copy failed: ' + error);
+        }
+        else {
+            console.info(component + ' copy succeeded');
+        }
+    });
 };
 
 // Copy modernizr file to JS directory
 var copyModernizrToSrc = function () {
-  var base = this.destinationPath._base(),
-      publicDir = base + '/' + this.publicDir,
-      publicAssetsDir = publicDir + '/assets',
-      bowerComponentsDir = publicAssetsDir + '/bower_components',
-      jsSrcDir = publicAssetsDir + '/js/src',
-      from = bowerComponentsDir + '/modernizr/modernizr.js',
-      to = jsSrcDir + '/modernizr.js';
+    var base = this.destinationRoot(),
+        publicDir = base + '/' + this.publicDir,
+        publicAssetsDir = publicDir + '/assets',
+        bowerComponentsDir = publicAssetsDir + '/bower_components',
+        jsModernizrDir = publicAssetsDir + '/js/modernizr',
+        from = bowerComponentsDir + '/modernizr/modernizr.js',
+        to = jsModernizrDir + '/modernizr.js';
 
-    if (!fs.existsSync(jsSrcDir)) {
-        mkdirp(jsSrcDir);
+    if (!fs.existsSync(jsModernizrDir)){
+        mkdirp(jsModernizrDir, function (err) {
+            if (err)
+                console.error(err)
+            else
+                console.log('Created Modernizr folder in JS directory')
+        });
     }
-    this.dest.removeValidationFilter('collision');
-    this.dest.copy(from, to);
-};
 
-// Copy destination path partial
-var copyDestPathPartial = function (to, exclude) {
-  exclude = exclude || [];
-  
-  this.dest.removeValidationFilter('collision');
-  return function (abs, root, sub, file) {
-    if (!_.contains(exclude, file) && ! _.contains(exclude, sub)) {
-      this.copy(abs, to + '/' + (sub || '') + '/' + file);
-    }
-  }.bind(this.dest);
+    // Copy modernizr
+    copy(from, to, function(error, results) {
+        if (error) {
+            console.error('Modernizr copy failed: ' + error);
+        }
+        else {
+            console.info('Modernizr copy succeeded');
+        }
+    });
 };
-
 
 module.exports = yeoman.generators.Base.extend({
   initializing: function () {
@@ -72,7 +89,7 @@ module.exports = yeoman.generators.Base.extend({
     askForModuleName: function () {
       var done = this.async(),
           self = this;;
-      
+
       var moduleName = extractModuleName(this.appname);
 
       this.log(yosay(
@@ -83,7 +100,10 @@ module.exports = yeoman.generators.Base.extend({
         type: 'input',
         name: 'moduleName',
         message: 'Name of the project',
-        default: moduleName
+        default: moduleName,
+        validate: function (val) {
+          return val !== '';
+        },
       }];
 
       this.prompt(prompts, function (props) {
@@ -114,7 +134,7 @@ module.exports = yeoman.generators.Base.extend({
         done();
       }.bind(this));
     },
-    
+
     askTinyPngApi: function() {
       var done = this.async();
 
@@ -127,18 +147,21 @@ module.exports = yeoman.generators.Base.extend({
             return response.haveTinyPngAPIKey;
         },
         name: 'tinyPngAPIKey',
-        message: 'Enter your TinyPNG API key'
+        message: 'Enter your TinyPNG API key',
+        validate: function (val) {
+          return val !== '';
+        },
       }];
 
       this.prompt(prompts, function (props) {
         this.haveTinyPngAPIKey = props.haveTinyPngAPIKey;
-        
+
         this.tinyPngAPIKey = props.tinyPngAPIKey;
 
         done();
       }.bind(this));
     },
-    
+
     askMinIe: function() {
       var done = this.async();
 
@@ -177,7 +200,7 @@ module.exports = yeoman.generators.Base.extend({
             name: this.appname
           }
       );
-      
+
       this.fs.copyTpl(
         this.templatePath('_bowerrc'),
         this.destinationPath('.bowerrc'),
@@ -185,7 +208,7 @@ module.exports = yeoman.generators.Base.extend({
             publicDir: this.publicDir
           }
       );
-      
+
       this.fs.copyTpl(
         this.templatePath('_gulpfile.js'),
         this.destinationPath('gulpfile.js'),
@@ -212,17 +235,17 @@ module.exports = yeoman.generators.Base.extend({
       );
     }
   },
-  
+
   end: function () {
     this.installDependencies({
       callback: function () {
-        var base = this.destinationPath._base();
+        var base = this.destinationRoot();
 
         // Fetch and copy Jam to public directory
         copyBowerFiles.call(this, 'jam', this.publicDir, excludeJamFiles);
-        
+
         // Fetch and copy Modernizr to JS directory
-        copyModernizrToSrc.call(this);
+        //copyModernizrToSrc.call(this);
 
       }.bind(this)
     });

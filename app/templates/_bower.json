@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "dependencies": {
   	    "jam": "master",
-        "modernizr": "*",
-        "jquery": null
+        "jquery-modern": "jquery#2",
+        "jquery-legacy": "jquery#^1"
     }
 }
