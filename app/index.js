@@ -187,7 +187,7 @@ module.exports = yeoman.generators.Base.extend({
         this.destinationPath('package.json'),
           {
             name: this.appname,
-            tingPngApiKey: this.tinyPngAPIKey
+            tinyPngApiKey: this.tinyPngAPIKey
           }
       );
     },
@@ -214,7 +214,7 @@ module.exports = yeoman.generators.Base.extend({
         this.destinationPath('gulpfile.js'),
           {
             publicDir: this.publicDir,
-            tingPngApiKey: this.tinyPngAPIKey,
+            tinyPngApiKey: this.tinyPngAPIKey,
             minIeVersionSupport: this.minIeVersionSupport
           }
       );

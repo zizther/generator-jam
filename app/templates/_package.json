@@ -14,7 +14,7 @@
     "gulp-modernizr": "*",
     "gulp-notify": "^2.2.0",
     "gulp-postcss": "^6.0.0",
-    "gulp-sass": "^2.0.4",<% if(tingPngApiKey){ %>
+    "gulp-sass": "^2.0.4",<% if(tinyPngApiKey){ %>
     "gulp-tinypng": "^1.0.2",<% } else { %>
     "gulp-imagemin": "^2.3.0",<% } %>
     "gulp-uglify": "^1.4.0"

@@ -33,7 +33,7 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	uglify = require('gulp-uglify'),
 	postcss = require('gulp-postcss'),
-	autoprefixer = require('autoprefixer'),<% if(tingPngApiKey) { %>
+	autoprefixer = require('autoprefixer'),<% if(tinyPngApiKey) { %>
 	tinypng = require('gulp-tinypng'),<% } else { %>
 	imagemin = require('gulp-imagemin'),<% } %>
 	browserSync = require('browser-sync'),
@@ -103,11 +103,11 @@ gulp.task('sass-production', function(){
 // Sass watch
 gulp.task('sass-watch', ['sass-dev'], browserSync.reload);
 
-<% if(tingPngApiKey) { %>
+<% if(tinyPngApiKey) { %>
 // TinyPNG
 gulp.task('tinypng', function() {
     gulp.src(paths.graphics.src + '*.{jpg,jpeg,png}')
-        .pipe(cache(tingpng('<%= tingPngApiKey %>')))
+        .pipe(cache(tinypng('<%= tinyPngApiKey %>')))
         .pipe(gulp.dest(paths.graphics.src))
         .pipe(notify({ message: 'Graphics task complete' }));
 });
@@ -122,14 +122,14 @@ gulp.task('images', function() {
 <% } %>
 
 // Concat and Uglify JS - Uncomment to manage JS concatination and uglify
-//gulp.task('concat', function(){
-//    return gulp.src(paths.scripts.src + '**/*.js')
-//        .pipe(concat('main.min.js'))
-//        .pipe(gulp.dest(paths.scripts.dest))
-//        .pipe(uglify())
-//        .pipe(gulp.dest(paths.scripts.dest))
-//        .pipe(notify({ message: 'Scripts task complete' }));
-//});
+gulp.task('concat', function(){
+  return gulp.src(paths.scripts.src + '**/*.js')
+    .pipe(concat('main.min.js'))
+    .pipe(gulp.dest(paths.scripts.dest))
+    .pipe(uglify())
+    .pipe(gulp.dest(paths.scripts.dest))
+    .pipe(notify({ message: 'Scripts task complete' }));
+});
 
 // Watch
 gulp.task('watch', function() {
@@ -146,6 +146,6 @@ gulp.task('watch', function() {
 gulp.task('default', ['watch']);
 
 // Build task
-var buildTasks = ['modernizr', 'sass-production', 'concat'<% if(tingPngApiKey) { %>, 'tinypng'<% } else { %>, 'images'<% } %>];
+var buildTasks = ['modernizr', 'sass-production', 'concat'<% if(tinyPngApiKey) { %>, 'tinypng'<% } else { %>, 'images'<% } %>];
 
 gulp.task('build', buildTasks, function() {});
